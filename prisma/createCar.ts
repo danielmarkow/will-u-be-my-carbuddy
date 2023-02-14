@@ -9,10 +9,16 @@ interface Car {
 }
 
 const firstCar: Array<Car> = [
+  // {
+  //   maker: "Mercedes-Benz",
+  //   model: "C-Klasse",
+  //   licencePlate: "BSMD512",
+  //   ownerId: "cle311pq10000e9d6r62qashr",
+  // },
   {
-    maker: "Mercedes-Benz",
-    model: "C-Klasse",
-    licencePlate: "BSMD512",
+    maker: "Volkswagen",
+    model: "Golf",
+    licencePlate: "BSMD513",
     ownerId: "cle311pq10000e9d6r62qashr",
   },
 ];
@@ -33,7 +39,7 @@ async function run() {
     })
   );
 
-  const myCart = await prisma.$transaction(createCarContent);
+  const myCars = await prisma.$transaction(createCarContent);
 }
 
 run().catch((error) => console.log(error));

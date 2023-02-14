@@ -19,7 +19,7 @@ model Car {
     maker        String
     model        String
     licencePlate String
-    ownerId      String    @unique
+    ownerId      String
     owner        User      @relation(fields: [ownerId], references: [id])
     createdAt    DateTime  @default(now())
     updatedAt    DateTime  @updatedAt
@@ -72,7 +72,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    Car           Car?
+    Car           Car[]
     UserCar       UserCar[]
 }
 
