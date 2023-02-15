@@ -17,7 +17,21 @@ import { useSession } from "next-auth/react";
 import { api } from "../utils/api";
 
 // TODO change icons
-const messageType = [
+
+interface MessageType {
+  name: string;
+  value: string | null;
+  icon: React.ForwardRefExoticComponent<
+    React.SVGProps<SVGSVGElement> & {
+      title?: string | undefined;
+      titleId?: string | undefined;
+    }
+  >;
+  iconColor: string;
+  bgColor: string;
+}
+
+const messageType: Array<MessageType> = [
   {
     name: "Parken",
     value: "parking",
@@ -55,7 +69,7 @@ const messageType = [
   },
   {
     name: "Nicht spezifiziert",
-    value: null,
+    value: "notdefined",
     icon: XMarkIcon,
     iconColor: "text-gray-400",
     bgColor: "bg-transparent",
@@ -81,6 +95,12 @@ export default function CarDetails() {
     { enabled: carId !== undefined }
   );
 
+  const sendMessageMut = api.messages.createMessage.useMutation({
+    onSuccess: () => {
+      setMessage("");
+    },
+  });
+
   return (
     <>
       {sessionData && (
@@ -103,6 +123,12 @@ export default function CarDetails() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   console.log(message);
+                  sendMessageMut.mutate({
+                    carId: carMessages?.id as string,
+                    userId: sessionData.user?.id as string,
+                    mtype: selected.value as string,
+                    message,
+                  });
                 }}
                 className="relative"
               >
@@ -114,7 +140,7 @@ export default function CarDetails() {
                     rows={3}
                     name="comment"
                     id="comment"
-                    className="block w-full resize-none border-0 py-3  sm:text-sm"
+                    className="block w-full resize-none border-0 py-3 px-1 sm:text-sm"
                     placeholder="Add your comment..."
                     defaultValue={""}
                     value={message}
@@ -143,7 +169,7 @@ export default function CarDetails() {
                             <div className="relative">
                               <Listbox.Button className="relative -m-2.5 flex h-10 w-10 items-center justify-center rounded-full text-gray-400 hover:text-gray-500">
                                 <span className="flex items-center justify-center">
-                                  {selected.value === null ? (
+                                  {selected?.value === "notdefined" ? (
                                     <span>
                                       {/* TODO change icon */}
                                       <FaceSmileIcon
@@ -159,7 +185,7 @@ export default function CarDetails() {
                                     <span>
                                       <span
                                         className={classNames(
-                                          selected.bgColor,
+                                          selected?.bgColor,
                                           "flex h-8 w-8 items-center justify-center rounded-full"
                                         )}
                                       >
@@ -169,7 +195,7 @@ export default function CarDetails() {
                                         />
                                       </span>
                                       <span className="sr-only">
-                                        {selected.name}
+                                        {selected?.name}
                                       </span>
                                     </span>
                                   )}
