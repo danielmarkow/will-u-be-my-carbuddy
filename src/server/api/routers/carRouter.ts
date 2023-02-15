@@ -9,4 +9,14 @@ export const carRouter = createTRPCRouter({
         where: { ownerId: input.userId },
       });
     }),
+  messages: protectedProcedure
+    .input(z.object({ carId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.car.findFirst({
+        where: { id: input.carId },
+        include: {
+          CarMessages: true,
+        },
+      });
+    }),
 });

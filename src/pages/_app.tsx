@@ -12,7 +12,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="px-4 py-8 sm:px-0">
+          <h1 className="text-xl text-gray-400">Carbuddy &hearts;</h1>
+          <Component {...pageProps} />
+        </div>
+      </div>
     </SessionProvider>
   );
 };
