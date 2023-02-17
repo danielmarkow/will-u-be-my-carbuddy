@@ -9,17 +9,17 @@ interface Car {
 }
 
 const firstCar: Array<Car> = [
-  // {
-  //   maker: "Mercedes-Benz",
-  //   model: "C-Klasse",
-  //   licencePlate: "BSMD512",
-  //   ownerId: "cle311pq10000e9d6r62qashr",
-  // },
+  {
+    maker: "Mercedes-Benz",
+    model: "C-Klasse",
+    licencePlate: "BSMD512",
+    ownerId: "cle90yxlg0000e9ivadmi54xn",
+  },
   {
     maker: "Volkswagen",
     model: "Golf",
     licencePlate: "BSMD513",
-    ownerId: "cle311pq10000e9d6r62qashr",
+    ownerId: "cle90yxlg0000e9ivadmi54xn",
   },
 ];
 

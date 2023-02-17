@@ -30,7 +30,7 @@ model Car {
 model CarMessages {
     id        String   @id @default(cuid())
     message   String
-    type      String
+    topic     String
     user      User     @relation(fields: [userId], references: [id])
     userId    String
     car       Car      @relation(fields: [carId], references: [id])

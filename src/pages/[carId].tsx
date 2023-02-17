@@ -1,13 +1,5 @@
 import { Fragment, useState } from "react";
 
-import {
-  FaceFrownIcon,
-  FaceSmileIcon,
-  FireIcon,
-  HandThumbUpIcon,
-  HeartIcon,
-  XMarkIcon,
-} from "@heroicons/react/20/solid";
 import { Listbox, Transition } from "@headlessui/react";
 
 import Image from "next/image";
@@ -16,63 +8,36 @@ import { useSession } from "next-auth/react";
 
 import { api } from "../utils/api";
 
-// TODO change icons
-
+import IconGenerator from "../components/common/IconGenerator";
 interface MessageType {
   name: string;
   value: string | null;
-  icon: React.ForwardRefExoticComponent<
-    React.SVGProps<SVGSVGElement> & {
-      title?: string | undefined;
-      titleId?: string | undefined;
-    }
-  >;
-  iconColor: string;
-  bgColor: string;
 }
 
-const messageType: Array<MessageType> = [
+const messageTopic: Array<MessageType> = [
   {
     name: "Parken",
     value: "parking",
-    icon: FireIcon,
-    iconColor: "text-white",
-    bgColor: "bg-red-500",
   },
   {
     name: "Tanken",
     value: "fuel",
-    icon: HeartIcon,
-    iconColor: "text-white",
-    bgColor: "bg-pink-400",
   },
   {
     name: "Schaden",
     value: "damage",
-    icon: FaceSmileIcon,
-    iconColor: "text-white",
-    bgColor: "bg-green-400",
   },
   {
     name: "Reinigung",
     value: "clean",
-    icon: FaceFrownIcon,
-    iconColor: "text-white",
-    bgColor: "bg-yellow-400",
   },
   {
     name: "Flüssigkeiten",
     value: "fluids",
-    icon: HandThumbUpIcon,
-    iconColor: "text-white",
-    bgColor: "bg-blue-500",
   },
   {
     name: "Nicht spezifiziert",
     value: "notdefined",
-    icon: XMarkIcon,
-    iconColor: "text-gray-400",
-    bgColor: "bg-transparent",
   },
 ];
 
@@ -81,7 +46,9 @@ const classNames = (...classes: any[]) => {
 };
 
 export default function CarDetails() {
-  const [selected, setSelected] = useState(messageType[5]);
+  const [selected, setSelected] = useState<MessageType>(
+    messageTopic[5] as MessageType
+  );
   const [message, setMessage] = useState("");
 
   const { data: sessionData } = useSession();
@@ -103,11 +70,12 @@ export default function CarDetails() {
 
   return (
     <>
-      {sessionData && (
+      {sessionData && carMessages && (
         <>
           <h3 className="text-xl font-bold leading-tight tracking-tight text-gray-900">
             Nachrichten - {carMessages?.licencePlate}
           </h3>
+          {/* message box */}
           <div className="mt-4 flex items-start space-x-4">
             <div className="flex-shrink-0">
               <Image
@@ -126,7 +94,7 @@ export default function CarDetails() {
                   sendMessageMut.mutate({
                     carId: carMessages?.id as string,
                     userId: sessionData.user?.id as string,
-                    mtype: selected.value as string,
+                    topic: selected.value as string,
                     message,
                   });
                 }}
@@ -134,15 +102,14 @@ export default function CarDetails() {
               >
                 <div className="overflow-hidden rounded-lg border border-gray-300 p-1 shadow-sm">
                   <label htmlFor="comment" className="sr-only">
-                    Add your comment
+                    Gib deine Nachricht ein
                   </label>
                   <textarea
                     rows={3}
                     name="comment"
                     id="comment"
                     className="block w-full resize-none border-0 py-3 px-1 sm:text-sm"
-                    placeholder="Add your comment..."
-                    defaultValue={""}
+                    placeholder="Gib hier deine Nachricht ein..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                   />
@@ -170,10 +137,11 @@ export default function CarDetails() {
                               <Listbox.Button className="relative -m-2.5 flex h-10 w-10 items-center justify-center rounded-full text-gray-400 hover:text-gray-500">
                                 <span className="flex items-center justify-center">
                                   {selected?.value === "notdefined" ? (
-                                    <span>
+                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black">
                                       {/* TODO change icon */}
-                                      <FaceSmileIcon
-                                        className="h-5 w-5 flex-shrink-0"
+                                      <IconGenerator
+                                        value="notdefined"
+                                        className="h-5 w-5 flex-shrink-0 text-white"
                                         aria-hidden="true"
                                       />
                                       <span className="sr-only">
@@ -183,13 +151,9 @@ export default function CarDetails() {
                                     </span>
                                   ) : (
                                     <span>
-                                      <span
-                                        className={classNames(
-                                          selected?.bgColor,
-                                          "flex h-8 w-8 items-center justify-center rounded-full"
-                                        )}
-                                      >
-                                        <selected.icon
+                                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black">
+                                        <IconGenerator
+                                          value={selected?.value}
                                           className="h-5 w-5 flex-shrink-0 text-white"
                                           aria-hidden="true"
                                         />
@@ -210,7 +174,7 @@ export default function CarDetails() {
                                 leaveTo="opacity-0"
                               >
                                 <Listbox.Options className="absolute z-10 mt-1 -ml-6 w-60 rounded-lg bg-white py-3 text-base shadow ring-1 ring-black ring-opacity-5 focus:outline-none sm:ml-auto sm:w-64 sm:text-sm">
-                                  {messageType.map((mtype) => (
+                                  {messageTopic.map((mtype) => (
                                     <Listbox.Option
                                       key={mtype.value}
                                       className={({ active }) =>
@@ -222,17 +186,10 @@ export default function CarDetails() {
                                       value={mtype}
                                     >
                                       <div className="flex items-center">
-                                        <div
-                                          className={classNames(
-                                            mtype.bgColor,
-                                            "flex h-8 w-8 items-center justify-center rounded-full"
-                                          )}
-                                        >
-                                          <mtype.icon
-                                            className={classNames(
-                                              mtype.iconColor,
-                                              "h-5 w-5 flex-shrink-0"
-                                            )}
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black">
+                                          <IconGenerator
+                                            value={mtype.value}
+                                            className="h-5 w-5 flex-shrink-0 text-white"
                                             aria-hidden="true"
                                           />
                                         </div>
@@ -253,7 +210,7 @@ export default function CarDetails() {
                   <div className="flex-shrink-0">
                     <button
                       type="submit"
-                      className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2"
                     >
                       Post
                     </button>
@@ -262,6 +219,20 @@ export default function CarDetails() {
               </form>
             </div>
           </div>
+          {/* message timeline */}
+          {carMessages.CarMessages.map((carmessage) => (
+            <div className="mt-4">
+              <div className="flex">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black">
+                  <IconGenerator
+                    value={carmessage.topic}
+                    className="h-5 w-5 flex-shrink-0 text-white"
+                  />
+                </div>
+                <p>{carmessage.message}</p>
+              </div>
+            </div>
+          ))}
         </>
       )}
       {!sessionData && <p>Bitte Einloggen</p>}

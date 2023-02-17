@@ -7,7 +7,7 @@ export const messagesRouter = createTRPCRouter({
       z.object({
         carId: z.string(),
         userId: z.string(),
-        mtype: z.string(),
+        topic: z.string(),
         message: z.string(),
       })
     )
@@ -15,7 +15,7 @@ export const messagesRouter = createTRPCRouter({
       return ctx.prisma.carMessages.create({
         data: {
           message: input.message,
-          type: input.mtype,
+          topic: input.topic,
           userId: input.userId,
           carId: input.carId,
         },
