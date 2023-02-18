@@ -9,6 +9,16 @@ export const carRouter = createTRPCRouter({
         where: { ownerId: input.userId },
       });
     }),
+  dashboardShared: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.userCar.findMany({
+        where: { userId: input.userId },
+        include: {
+          car: true,
+        },
+      });
+    }),
   messages: protectedProcedure
     .input(z.object({ carId: z.string() }))
     .query(({ ctx, input }) => {
