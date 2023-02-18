@@ -15,7 +15,18 @@ export const carRouter = createTRPCRouter({
       return ctx.prisma.car.findFirst({
         where: { id: input.carId },
         include: {
-          CarMessages: true,
+          CarMessages: {
+            orderBy: {
+              createdAt: "desc",
+            },
+            include: {
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
         },
       });
     }),
