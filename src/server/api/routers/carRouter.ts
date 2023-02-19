@@ -40,4 +40,28 @@ export const carRouter = createTRPCRouter({
         },
       });
     }),
+  createCar: protectedProcedure
+    .input(
+      z.object({
+        maker: z.string(),
+        model: z.string(),
+        licencePlate: z.string(),
+        userId: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      const { maker, model, licencePlate, userId } = input;
+      return ctx.prisma.car.create({
+        data: {
+          maker,
+          model,
+          licencePlate,
+          owner: {
+            connect: {
+              id: userId,
+            },
+          },
+        },
+      });
+    }),
 });

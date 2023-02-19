@@ -1,4 +1,5 @@
 import { type AppType } from "next/app";
+import Link from "next/link";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
@@ -16,7 +17,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Toaster />
       <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="px-4 py-8 sm:px-0">
-          <h1 className="text-xl text-gray-400">Carbuddy &hearts;</h1>
+          <Link href={"/"}>
+            <h1 className="text-xl text-gray-400">Carbuddy &hearts;</h1>
+          </Link>
           <Component {...pageProps} />
         </div>
       </div>

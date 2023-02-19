@@ -41,6 +41,15 @@ export default function Dashboard({ usersCars }: { usersCars: Array<Car> }) {
           </Link>
         </div>
       )}
+      {usersCars && (
+        <div className="mt-2 flex h-80 items-center justify-center rounded-lg border-2 border-dashed border-gray-300">
+          <Link href={"/register-vehicle"}>
+            <button className="inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2">
+              Weiteres Auto registrieren
+            </button>
+          </Link>
+        </div>
+      )}
       <h3 className="mt-2 text-xl font-bold leading-tight tracking-tight text-gray-900">
         Weitere nutzbare Autos
       </h3>
