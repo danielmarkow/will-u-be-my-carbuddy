@@ -25,6 +25,17 @@ model Car {
     updatedAt    DateTime      @updatedAt
     UserCar      UserCar[]
     CarMessages  CarMessages[]
+    Invite       Invite[]
+}
+
+model Invite {
+    id        String   @id @default(cuid())
+    creator   User     @relation(fields: [creatorId], references: [id])
+    creatorId String
+    car       Car      @relation(fields: [carId], references: [id])
+    carId     String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model CarMessages {
@@ -88,6 +99,7 @@ model User {
     Car           Car[]
     UserCar       UserCar[]
     CarMessages   CarMessages[]
+    Invite        Invite[]
 }
 
 model VerificationToken {

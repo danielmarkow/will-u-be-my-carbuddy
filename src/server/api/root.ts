@@ -1,4 +1,5 @@
 import { carRouter } from "./routers/carRouter";
+import { inviteRouter } from "./routers/inviteRouter";
 import { messagesRouter } from "./routers/messagesRouter";
 import { createTRPCRouter } from "./trpc";
 // import { exampleRouter } from "./routers/example";
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   // example: exampleRouter,
   car: carRouter,
   messages: messagesRouter,
+  invite: inviteRouter,
 });
 
 // export type definition of API
