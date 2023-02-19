@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 export const inviteRouter = createTRPCRouter({
   getInvite: publicProcedure
@@ -15,6 +16,7 @@ export const inviteRouter = createTRPCRouter({
           },
           car: {
             select: {
+              id: true,
               maker: true,
               model: true,
             },
@@ -34,5 +36,32 @@ export const inviteRouter = createTRPCRouter({
       });
 
       return invite.id;
+    }),
+  acceptInvite: protectedProcedure
+    .input(
+      z.object({ userId: z.string(), carId: z.string(), inviteId: z.string() })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const sharedCar = await ctx.prisma.userCar.create({
+        data: {
+          user: { connect: { id: input.userId } },
+          car: { connect: { id: input.carId } },
+        },
+      });
+
+      if (sharedCar) {
+        try {
+          const delInvite = await ctx.prisma.invite.delete({
+            where: { id: input.inviteId },
+          });
+          return sharedCar;
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "error deleting the invite",
+            cause: error,
+          });
+        }
+      }
     }),
 });

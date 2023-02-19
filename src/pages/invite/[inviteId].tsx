@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { api } from "../../utils/api";
 
 import DarkButton from "../../components/common/DarkButton";
+import { toast } from "react-hot-toast";
 
 // When you open an invite link send
 // to you to join in sharing someones
@@ -20,6 +21,13 @@ export default function Invite() {
     { enabled: inviteId !== undefined }
   );
 
+  const acceptInviteMutation = api.invite.acceptInvite.useMutation({
+    onSuccess: () => {
+      toast.success("Du kannst das Auto jetzt mit nutzen");
+      router.push("/");
+    },
+  });
+
   return (
     <>
       {inviteData && (
@@ -29,7 +37,17 @@ export default function Invite() {
             {inviteData?.car.maker} {inviteData?.car.model} mit zu nutzen
           </p>
           {sessionData ? (
-            <DarkButton>Mitmachen!</DarkButton>
+            <DarkButton
+              onClick={() => {
+                acceptInviteMutation.mutate({
+                  userId: sessionData.user?.id as string,
+                  carId: inviteData.car.id,
+                  inviteId: inviteData.id,
+                });
+              }}
+            >
+              Mitmachen!
+            </DarkButton>
           ) : (
             <DarkButton>Einloggen</DarkButton>
           )}
