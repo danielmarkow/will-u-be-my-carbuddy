@@ -33,6 +33,7 @@ export const carRouter = createTRPCRouter({
               user: {
                 select: {
                   name: true,
+                  image: true,
                 },
               },
             },

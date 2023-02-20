@@ -272,8 +272,8 @@ export default function CarDetails() {
                         </span>
                         <Image
                           className="ml-1 inline-block h-8 w-8 rounded-full"
-                          src={sessionData?.user?.image as string}
-                          alt={`image of ${sessionData?.user?.name as string}`}
+                          src={carmessage.user.image as string}
+                          alt={`image of ${carmessage.user.name as string}`}
                           height={600}
                           width={450}
                         />
