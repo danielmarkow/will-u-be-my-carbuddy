@@ -1,12 +1,15 @@
 import { type AppType } from "next/app";
 import Link from "next/link";
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider, signOut, useSession } from "next-auth/react";
 
 import { api } from "../utils/api";
 
-import "../styles/globals.css";
 import { Toaster } from "react-hot-toast";
+
+import "../styles/globals.css";
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/20/solid";
+import Navbar from "../components/Navbar";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -17,9 +20,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Toaster />
       <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="px-4 py-8 sm:px-0">
-          <Link href={"/"}>
-            <h1 className="text-xl text-gray-400">Carbuddy &hearts;</h1>
-          </Link>
+          <Navbar />
           <Component {...pageProps} />
         </div>
       </div>

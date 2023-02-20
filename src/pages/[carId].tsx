@@ -82,7 +82,6 @@ export default function CarDetails() {
   const { data: sessionData } = useSession();
   const { carId } = useRouter().query;
 
-  // TODO verify that only users the car is shared with can message and see messages!
   // TODO paginate query
   const { data: carMessages } = api.car.messages.useQuery(
     {
