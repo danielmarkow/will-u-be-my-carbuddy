@@ -87,8 +87,9 @@ export default function CarDetails() {
   const { data: carMessages } = api.car.messages.useQuery(
     {
       carId: carId as string,
+      userId: sessionData?.user?.id as string,
     },
-    { enabled: carId !== undefined }
+    { enabled: carId !== undefined && sessionData !== undefined }
   );
   const sendMessageMut = api.messages.createMessage.useMutation({
     onSuccess: () => {

@@ -20,26 +20,45 @@ export const carRouter = createTRPCRouter({
       });
     }),
   messages: protectedProcedure
-    .input(z.object({ carId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.prisma.car.findFirst({
-        where: { id: input.carId },
-        include: {
-          CarMessages: {
-            orderBy: {
-              createdAt: "desc",
-            },
-            include: {
-              user: {
-                select: {
-                  name: true,
-                  image: true,
+    .input(z.object({ carId: z.string(), userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      let validated = false;
+      // check if user is owner
+      const ownCar = await ctx.prisma.car.findFirst({
+        where: { ownerId: input.userId, id: input.carId },
+      });
+      if (ownCar) {
+        validated = true;
+      } else {
+        // check if user is co-owning
+        const sharedCar = await ctx.prisma.userCar.findFirst({
+          where: { userId: input.userId, carId: input.carId },
+        });
+        if (sharedCar) validated = true;
+      }
+
+      if (validated) {
+        return ctx.prisma.car.findFirst({
+          where: { id: input.carId },
+          include: {
+            CarMessages: {
+              orderBy: {
+                createdAt: "desc",
+              },
+              include: {
+                user: {
+                  select: {
+                    name: true,
+                    image: true,
+                  },
                 },
               },
             },
           },
-        },
-      });
+        });
+      } else {
+        return null;
+      }
     }),
   createCar: protectedProcedure
     .input(
