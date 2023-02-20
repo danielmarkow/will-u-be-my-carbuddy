@@ -5,6 +5,8 @@ import { ShareIcon } from "@heroicons/react/20/solid";
 
 import type Car from "../../types/carsType";
 
+import type { UseMutationResult } from "@tanstack/react-query";
+
 // TODO figure out type of the mutation
 
 export default function CarCard({
@@ -12,7 +14,7 @@ export default function CarCard({
   createInviteMutation,
 }: {
   car: Car;
-  createInviteMutation?: any;
+  createInviteMutation?: UseMutationResult;
 }) {
   const { data: sessionData } = useSession();
 

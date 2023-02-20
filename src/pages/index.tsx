@@ -5,7 +5,9 @@ import { signIn, useSession } from "next-auth/react";
 import { api } from "../utils/api";
 import Dashboard from "../components/Dashboard";
 
-import type { Car } from "../types/carsType";
+import type Car from "../types/carsType";
+import DarkButton from "../components/common/DarkButton";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/20/solid";
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -26,12 +28,42 @@ const Home: NextPage = () => {
         {sessionData ? (
           <Dashboard usersCars={usersCars as Car[]} />
         ) : (
-          <button
-            className="mt-2 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            onClick={() => void signIn()}
-          >
-            Login
-          </button>
+          <div className="flex flex-col items-center">
+            <p className="text mt-2 text-center text-2xl">
+              Willkommen bei CarBuddy - Einfache CarSharing Software für dich
+              und deine Community
+            </p>
+            <DarkButton className="mt-10" onClick={() => void signIn()}>
+              Login
+            </DarkButton>
+            <p className="mt-10 text-xl">(zukünftige) Features</p>
+            <ul className="mt-2">
+              <li>
+                <div className="flex">
+                  <CheckCircleIcon className="mr-1 mt-1 h-5 w-5" /> Typisierte
+                  Nachrichten mit deinen Mit-Nutzern austauschen
+                </div>
+              </li>
+              <li>
+                <div className="flex">
+                  <XCircleIcon className="mr-1 mt-1 h-5 w-5" />
+                  Kalender zum Auto buchen
+                </div>
+              </li>
+              <li>
+                <div className="flex">
+                  <XCircleIcon className="mr-1 mt-1 h-5 w-5" />
+                  Geolocation des Autos hinterlegen
+                </div>
+              </li>
+              <li>
+                <div className="flex">
+                  <XCircleIcon className="mr-1 mt-1 h-5 w-5" />
+                  Email Benachrichtigungen
+                </div>
+              </li>
+            </ul>
+          </div>
         )}
       </main>
     </>
