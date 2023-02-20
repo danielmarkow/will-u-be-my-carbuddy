@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 
 import { api } from "../../utils/api";
 
@@ -49,7 +49,7 @@ export default function Invite() {
               Mitmachen!
             </DarkButton>
           ) : (
-            <DarkButton>Einloggen</DarkButton>
+            <DarkButton onClick={() => signIn()}>Einloggen</DarkButton>
           )}
         </>
       )}
