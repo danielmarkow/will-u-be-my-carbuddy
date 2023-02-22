@@ -3,16 +3,23 @@ import { useRouter } from "next/router";
 
 import { useSession } from "next-auth/react";
 
-import { ShareIcon } from "@heroicons/react/20/solid";
+import { ShareIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { toast } from "react-hot-toast";
 
 import { api } from "../../utils/api";
 import type Car from "../../types/carsType";
 
-export default function CarCard({ car }: { car: Car }) {
+export default function CarCard({
+  car,
+  shared,
+}: {
+  car: Car;
+  shared: boolean;
+}) {
   const { data: sessionData } = useSession();
 
   const router = useRouter();
+  const utils = api.useContext();
 
   const createInviteMutation = api.invite.createInvite.useMutation({
     onSuccess: (data) => {
@@ -20,6 +27,14 @@ export default function CarCard({ car }: { car: Car }) {
     },
     onError: () => toast.error("Fehler beim Erstellen der Einladung"),
   });
+
+  const deleteCarMutation = api.car.deleteCar.useMutation({
+    onSuccess: () => {
+      toast.success("Auto erfolgreich gelöscht");
+      utils.car.dashboard.invalidate().catch((err) => console.log(err));
+    },
+  });
+
   return (
     <>
       <div
@@ -35,17 +50,26 @@ export default function CarCard({ car }: { car: Car }) {
               Nachrichten
             </button>
           </Link>
-          {createInviteMutation !== undefined && (
-            <button
-              onClick={() => {
-                createInviteMutation.mutate({
-                  userId: sessionData?.user?.id as string,
-                  carId: car.id,
-                });
-              }}
-            >
-              <ShareIcon className="mt-1 ml-2 h-5 w-5" />
-            </button>
+          {shared === false && (
+            <>
+              <button
+                onClick={() => {
+                  createInviteMutation.mutate({
+                    userId: sessionData?.user?.id as string,
+                    carId: car.id,
+                  });
+                }}
+              >
+                <ShareIcon className="mt-1 ml-2 h-5 w-5" />
+              </button>
+              <button
+                onClick={() => {
+                  deleteCarMutation.mutate({ carId: car.id });
+                }}
+              >
+                <TrashIcon className="ml-2 mt-1 h-5 w-5" />
+              </button>
+            </>
           )}
         </div>
       </div>

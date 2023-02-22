@@ -85,4 +85,11 @@ export const carRouter = createTRPCRouter({
         },
       });
     }),
+  deleteCar: protectedProcedure
+    .input(z.object({ carId: z.string().cuid() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.car.delete({
+        where: { id: input.carId },
+      });
+    }),
 });

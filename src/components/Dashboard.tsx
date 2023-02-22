@@ -25,7 +25,9 @@ export default function Dashboard({ usersCars }: { usersCars: Array<Car> }) {
         Meine Autos
       </h3>
       {usersCars && usersCars.length > 0 ? (
-        usersCars.map((car, carIdx) => <CarCard car={car} key={carIdx} />)
+        usersCars.map((car, carIdx) => (
+          <CarCard car={car} shared={false} key={carIdx} />
+        ))
       ) : (
         <div className="mt-2 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-3">
           <Link href={"/register-vehicle"}>
@@ -57,7 +59,7 @@ export default function Dashboard({ usersCars }: { usersCars: Array<Car> }) {
       {sharedCars.data &&
         sharedCars.data.length > 0 &&
         sharedCars.data.map((sharedCar, sharedCarIdx) => (
-          <CarCard car={sharedCar.car} key={sharedCarIdx} />
+          <CarCard car={sharedCar.car} shared={true} key={sharedCarIdx} />
         ))}
     </>
   );
