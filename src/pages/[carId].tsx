@@ -67,6 +67,7 @@ const messageTopic: Array<MessageType> = [
   },
 ];
 
+// eslint-disable-next-line
 const classNames = (...classes: any[]) => {
   return classes.filter(Boolean).join(" ");
 };
@@ -94,7 +95,7 @@ export default function CarDetails() {
     onSuccess: () => {
       setMessage("");
       setSelected(messageTopic[5] as MessageType);
-      utils.car.messages.invalidate();
+      void utils.car.messages.invalidate();
     },
   });
 
@@ -122,7 +123,7 @@ export default function CarDetails() {
                   e.preventDefault();
                   console.log(message);
                   sendMessageMut.mutate({
-                    carId: carMessages?.id as string,
+                    carId: carMessages?.id,
                     userId: sessionData.user?.id as string,
                     topic: selected.value as string,
                     message,

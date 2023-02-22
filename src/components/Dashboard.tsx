@@ -1,25 +1,13 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useSession } from "next-auth/react";
 import type Car from "../types/carsType";
-
-import { toast } from "react-hot-toast";
 
 import { api } from "../utils/api";
 import CarCard from "./common/CarCard";
 
 export default function Dashboard({ usersCars }: { usersCars: Array<Car> }) {
   const { data: sessionData } = useSession();
-
-  const router = useRouter();
-
-  const createInviteMutation = api.invite.createInvite.useMutation({
-    onSuccess: (data) => {
-      router.push(`/create-invite/${data}`);
-    },
-    onError: () => toast.error("Fehler beim Erstellen der Einladung"),
-  });
 
   const sharedCars = api.car.dashboardShared.useQuery(
     { userId: sessionData?.user?.id as string },
@@ -37,9 +25,7 @@ export default function Dashboard({ usersCars }: { usersCars: Array<Car> }) {
         Meine Autos
       </h3>
       {usersCars && usersCars.length > 0 ? (
-        usersCars.map((car) => (
-          <CarCard car={car} createInviteMutation={createInviteMutation} />
-        ))
+        usersCars.map((car, carIdx) => <CarCard car={car} key={carIdx} />)
       ) : (
         <div className="mt-2 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-3">
           <Link href={"/register-vehicle"}>
@@ -70,7 +56,9 @@ export default function Dashboard({ usersCars }: { usersCars: Array<Car> }) {
       )}
       {sharedCars.data &&
         sharedCars.data.length > 0 &&
-        sharedCars.data.map((sharedCar) => <CarCard car={sharedCar.car} />)}
+        sharedCars.data.map((sharedCar, sharedCarIdx) => (
+          <CarCard car={sharedCar.car} key={sharedCarIdx} />
+        ))}
     </>
   );
 }

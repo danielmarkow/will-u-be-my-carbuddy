@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -21,22 +21,38 @@ export default function RegisterVehicle() {
   const createCarMutation = api.car.createCar.useMutation({
     onSuccess: () => {
       toast.success("Auto erstellt");
-      router.push("/");
+      void router.push("/");
+    },
+    onError: () => {
+      toast.error("Fehler beim Anlegen des Autos");
     },
   });
+
+  type FormValues = {
+    maker: string;
+    model: string;
+    licencePlate: string;
+  };
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormValues>({
     mode: "onBlur",
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    data = { ...data, userId: sessionData?.user?.id as string };
-    createCarMutation.mutate(data);
+  type FormMutationInput = {
+    maker: string;
+    model: string;
+    licencePlate: string;
+    userId: string;
+  };
+
+  const onSubmit = (data: FieldValues) => {
+    const submitData = { ...data, userId: sessionData?.user?.id };
+    createCarMutation.mutate(submitData as FormMutationInput);
   };
 
   return (
@@ -47,7 +63,10 @@ export default function RegisterVehicle() {
             Neues Auto anlegen
           </h2>
           <p className="mt-1">Du bist Besitzer von...</p>
-          <form className="mt-1" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className="mt-1"
+            onSubmit={handleSubmit((data) => onSubmit(data))}
+          >
             <div>
               <label
                 htmlFor="maker"

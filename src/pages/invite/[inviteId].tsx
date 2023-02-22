@@ -24,7 +24,7 @@ export default function Invite() {
   const acceptInviteMutation = api.invite.acceptInvite.useMutation({
     onSuccess: () => {
       toast.success("Du kannst das Auto jetzt mit nutzen");
-      router.push("/");
+      void router.push("/");
     },
   });
 
@@ -33,7 +33,7 @@ export default function Invite() {
       {inviteData && (
         <>
           <p>
-            Du bist herzlich eingeladen &hearts; {inviteData?.creator.name}'s{" "}
+            Du bist herzlich eingeladen &hearts; {inviteData?.creator.name}s{" "}
             {inviteData?.car.maker} {inviteData?.car.model} mit zu nutzen
           </p>
           {sessionData ? (
@@ -49,7 +49,7 @@ export default function Invite() {
               Mitmachen!
             </DarkButton>
           ) : (
-            <DarkButton onClick={() => signIn()}>Einloggen</DarkButton>
+            <DarkButton onClick={() => void signIn()}>Einloggen</DarkButton>
           )}
         </>
       )}

@@ -12,7 +12,7 @@ export default function Navbar() {
           <h1 className="text-xl text-gray-400">Carbuddy &hearts;</h1>
         </Link>
         {sessionData && (
-          <button title="Abmelden" onClick={() => signOut()}>
+          <button title="Abmelden" onClick={() => void signOut()}>
             <ArrowLeftOnRectangleIcon className="ml-6 mt-0 h-5 w-5" />
           </button>
         )}

@@ -15,7 +15,9 @@ export default function CreatedInvite() {
       {sessionData && (
         <>
           <p>Einladung generiert - Teile via ...</p>
-          <p>{`${process.env.NEXT_PUBLIC_INVITE_URL}/invite/${inviteId}`}</p>
+          <p>{`${process.env.NEXT_PUBLIC_INVITE_URL as string}/invite/${
+            inviteId as string
+          }`}</p>
         </>
       )}
       {!sessionData && <p>Bitte Einloggen</p>}

@@ -71,6 +71,7 @@ export const carRouter = createTRPCRouter({
     )
     .mutation(({ ctx, input }) => {
       const { maker, model, licencePlate, userId } = input;
+      input;
       return ctx.prisma.car.create({
         data: {
           maker,

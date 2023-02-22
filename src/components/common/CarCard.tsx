@@ -1,23 +1,25 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
+
 import { useSession } from "next-auth/react";
 
 import { ShareIcon } from "@heroicons/react/20/solid";
+import { toast } from "react-hot-toast";
 
+import { api } from "../../utils/api";
 import type Car from "../../types/carsType";
 
-import type { UseMutationResult } from "@tanstack/react-query";
-
-// TODO figure out type of the mutation
-
-export default function CarCard({
-  car,
-  createInviteMutation,
-}: {
-  car: Car;
-  createInviteMutation?: UseMutationResult;
-}) {
+export default function CarCard({ car }: { car: Car }) {
   const { data: sessionData } = useSession();
 
+  const router = useRouter();
+
+  const createInviteMutation = api.invite.createInvite.useMutation({
+    onSuccess: (data) => {
+      router.push(`/create-invite/${data}`).catch((err) => console.log(err));
+    },
+    onError: () => toast.error("Fehler beim Erstellen der Einladung"),
+  });
   return (
     <>
       <div
