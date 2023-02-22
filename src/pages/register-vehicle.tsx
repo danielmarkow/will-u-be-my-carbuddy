@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import type { FieldValues } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -65,7 +66,7 @@ export default function RegisterVehicle() {
           <p className="mt-1">Du bist Besitzer von...</p>
           <form
             className="mt-1"
-            onSubmit={handleSubmit((data) => onSubmit(data))}
+            onSubmit={void handleSubmit((data) => void onSubmit(data))}
           >
             <div>
               <label

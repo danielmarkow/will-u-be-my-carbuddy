@@ -51,6 +51,7 @@ export const inviteRouter = createTRPCRouter({
 
       if (sharedCar) {
         try {
+          // eslint-disable-next-line
           const delInvite = await ctx.prisma.invite.delete({
             where: { id: input.inviteId },
           });
