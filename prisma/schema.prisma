@@ -33,7 +33,7 @@ model Invite {
     id        String   @id @default(cuid())
     creator   User     @relation(fields: [creatorId], references: [id])
     creatorId String
-    car       Car      @relation(fields: [carId], references: [id])
+    car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
     carId     String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -45,7 +45,7 @@ model CarMessages {
     topic     String
     user      User     @relation(fields: [userId], references: [id])
     userId    String
-    car       Car      @relation(fields: [carId], references: [id])
+    car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
     carId     String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -55,7 +55,7 @@ model UserCar {
     id        String   @id @default(cuid())
     user      User     @relation(fields: [userId], references: [id])
     userId    String
-    car       Car      @relation(fields: [carId], references: [id])
+    car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
     carId     String
     role      String?
     createdAt DateTime @default(now())

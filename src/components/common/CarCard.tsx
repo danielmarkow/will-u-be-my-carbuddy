@@ -33,6 +33,9 @@ export default function CarCard({
       toast.success("Auto erfolgreich gelöscht");
       utils.car.dashboard.invalidate().catch((err) => console.log(err));
     },
+    onError: () => {
+      toast.error("Fehler beim Löschen des Autos");
+    },
   });
 
   return (

@@ -16,7 +16,11 @@ export default function Invite() {
 
   const { data: sessionData } = useSession();
 
-  const { data: inviteData } = api.invite.getInvite.useQuery(
+  const {
+    data: inviteData,
+    isLoading,
+    isSuccess,
+  } = api.invite.getInvite.useQuery(
     { inviteId: inviteId as string },
     { enabled: inviteId !== undefined }
   );
@@ -53,7 +57,10 @@ export default function Invite() {
           )}
         </>
       )}
-      {!inviteData && <p>Entschuldige aber der Link ist nicht mehr gültig</p>}
+      {isLoading && <p>Link wird geprüft</p>}
+      {!inviteData && isSuccess && (
+        <p>Entschuldige aber der Link ist nicht mehr gültig</p>
+      )}
     </>
   );
 }
