@@ -7,13 +7,16 @@ export default function Navbar() {
   const { data: sessionData } = useSession();
   return (
     <>
-      <div className="flex">
+      <div className="flex justify-between">
         <Link href={"/"}>
           <h1 className="text-xl text-gray-400">Carbuddy &hearts;</h1>
         </Link>
         {sessionData && (
           <button title="Abmelden" onClick={() => void signOut()}>
-            <ArrowLeftOnRectangleIcon className="ml-6 mt-0 h-5 w-5" />
+            <div className="flex flex-row">
+              <ArrowLeftOnRectangleIcon className="mt-1 h-6 w-6 fill-gray-400" />
+              <span className="mt-1 ml-1 text-gray-400">Ausloggen</span>
+            </div>
           </button>
         )}
       </div>

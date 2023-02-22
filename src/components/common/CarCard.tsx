@@ -42,9 +42,9 @@ export default function CarCard({
     <>
       <div
         key={car.id}
-        className="mt-2 rounded-lg border-4 border-gray-300 p-1"
+        className="mt-2 rounded-lg border-4 border-gray-300 p-2"
       >
-        <p className="mt-1 ml-5">
+        <p className="mt-1 ml-5 text-xl">
           {car.maker} - {car.model} - {car.licencePlate}
         </p>
         <div className="flex">
@@ -63,14 +63,14 @@ export default function CarCard({
                   });
                 }}
               >
-                <ShareIcon className="mt-1 ml-2 h-5 w-5" />
+                <ShareIcon className="mt-1 ml-5 h-7 w-7" />
               </button>
               <button
                 onClick={() => {
                   deleteCarMutation.mutate({ carId: car.id });
                 }}
               >
-                <TrashIcon className="ml-2 mt-1 h-5 w-5" />
+                <TrashIcon className="ml-5 mt-1 h-7 w-7" />
               </button>
             </>
           )}
