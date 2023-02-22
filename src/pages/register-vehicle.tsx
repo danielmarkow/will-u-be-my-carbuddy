@@ -52,6 +52,7 @@ export default function RegisterVehicle() {
   };
 
   const onSubmit = (data: FieldValues) => {
+    console.log(data);
     const submitData = { ...data, userId: sessionData?.user?.id };
     createCarMutation.mutate(submitData as FormMutationInput);
   };
@@ -66,7 +67,8 @@ export default function RegisterVehicle() {
           <p className="mt-1">Du bist Besitzer von...</p>
           <form
             className="mt-1"
-            onSubmit={void handleSubmit((data) => void onSubmit(data))}
+            // eslint-disable-next-line
+            onSubmit={handleSubmit((data) => onSubmit(data))}
           >
             <div>
               <label
