@@ -33,7 +33,11 @@ const Home: NextPage = () => {
               Willkommen bei CarBuddy - Einfache CarSharing Software für dich
               und deine Community
             </p>
-            <DarkButton className="mt-10" onClick={() => void signIn()}>
+            <DarkButton
+              large={true}
+              className="mt-10"
+              onClick={() => void signIn()}
+            >
               Login
             </DarkButton>
             <p className="mt-10 text-xl">(zukünftige) Features</p>
