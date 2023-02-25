@@ -69,17 +69,17 @@ const generateCalendarDates = (date: Date): Array<Days> => {
           days.push({
             date: newDate.toISOString().slice(0, 10),
             isCurrentMonth: true,
-            isSelected: true,
+            // isSelected: true,
             isToday: true,
             events: [],
           });
-          break;
+        } else {
+          days.push({
+            date: newDate.toISOString().slice(0, 10),
+            isCurrentMonth: true,
+            events: [],
+          });
         }
-        days.push({
-          date: newDate.toISOString().slice(0, 10),
-          isCurrentMonth: true,
-          events: [],
-        });
       } else {
         days.push({
           date: newDate.toISOString().slice(0, 10),

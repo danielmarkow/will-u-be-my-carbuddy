@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { api } from "../utils/api";
 
 import { Toaster } from "react-hot-toast";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import "../styles/globals.css";
 
@@ -24,6 +25,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
           <Component {...pageProps} />
         </div>
       </div>
+      <ReactQueryDevtools initialIsOpen={false} />
     </SessionProvider>
   );
 };

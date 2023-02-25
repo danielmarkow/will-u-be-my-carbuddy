@@ -55,6 +55,8 @@ export default function Calendar() {
     },
   ];
 
+  const utils = api.useContext();
+
   const [selectedMonth, setSelectedMonth] = useState<Months>(
     months.find((m) => m.isCurrentMonth)!
   );
@@ -70,12 +72,31 @@ export default function Calendar() {
       toast.error("Fehler beim Erzeugen des Kalenders");
       return [];
     },
-    onSuccess: (days) => {
-      setSelectedDay(days[0]);
-    },
   });
 
-  const [selectedDay, setSelectedDay] = useState<Days>();
+  const [selectedDay, setSelectedDay] = useState<Days>({
+    date: new Date().toISOString().slice(0, 10),
+    isCurrentMonth: true,
+    isSelected: true,
+    events: [],
+  });
+
+  const updateCachedQuery = (selectedDate: Array<Days>) => {
+    utils.calendar.getCalendar.setData(void {}, (oldData) => {
+      const newData = oldData?.map((obj) => {
+        if (obj.isSelected === true) {
+          const { isSelected, ...rest } = obj;
+          return rest;
+        } else {
+          return obj;
+        }
+      });
+
+      return newData?.map(
+        (obj) => selectedDate.find((d) => d.date === obj.date) || obj
+      );
+    });
+  };
 
   const classNames = (...classes: any[]) => {
     return classes.filter(Boolean).join(" ");
@@ -83,7 +104,7 @@ export default function Calendar() {
 
   return (
     <>
-      {JSON.stringify(days)}
+      {/* {JSON.stringify(selectedDay)} */}
       {days && (
         <>
           {/* offsetMonths: {JSON.stringify(offsetMonths)} */}
@@ -401,6 +422,7 @@ export default function Calendar() {
                   {days.map((day) => (
                     <button
                       key={day.date}
+                      id={day.date}
                       type="button"
                       className={classNames(
                         day.isCurrentMonth ? "bg-white" : "bg-gray-50",
@@ -417,6 +439,15 @@ export default function Calendar() {
                           "text-gray-500",
                         "flex h-14 flex-col py-2 px-3 hover:bg-gray-100 focus:z-10"
                       )}
+                      onClick={(e) => {
+                        const newlySelectedDay = days.find(
+                          (day) => day.date === e.currentTarget.id
+                        )!;
+                        setSelectedDay(newlySelectedDay);
+                        updateCachedQuery([
+                          { ...newlySelectedDay, isSelected: true },
+                        ]);
+                      }}
                     >
                       <time
                         dateTime={day.date}
