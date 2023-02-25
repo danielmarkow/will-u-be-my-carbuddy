@@ -2,6 +2,27 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 // date utilities and types
+type Event = {
+  id: number;
+  name: string;
+  time: string;
+  datetime: string;
+  href: string;
+};
+
+type Days = {
+  date: string;
+  isCurrentMonth?: boolean;
+  isSelected?: boolean;
+  isToday?: boolean;
+  events: Array<Event>;
+};
+
+type Months = {
+  year: string;
+  month: string;
+};
+
 const firstDayOfMonth = (offsetMonths: number): Date => {
   const date = new Date();
   console.log("date firstDayOfMonth", date.toISOString());
@@ -31,22 +52,6 @@ const isDateToday = (date: Date) => {
   );
 };
 
-type Event = {
-  id: number;
-  name: string;
-  time: string;
-  datetime: string;
-  href: string;
-};
-
-type Days = {
-  date: string;
-  isCurrentMonth?: boolean;
-  isSelected?: boolean;
-  isToday?: boolean;
-  events: Array<Event>;
-};
-
 // generates basis dates to fill the calendar
 const generateCalendarDates = (date: Date): Array<Days> => {
   let days = [];
@@ -68,6 +73,7 @@ const generateCalendarDates = (date: Date): Array<Days> => {
             isToday: true,
             events: [],
           });
+          break;
         }
         days.push({
           date: newDate.toISOString().slice(0, 10),
@@ -84,11 +90,6 @@ const generateCalendarDates = (date: Date): Array<Days> => {
     date.setMonth(month + 1);
   }
   return days;
-};
-
-type Months = {
-  year: string;
-  month: string;
 };
 
 const generateCalendarMonths = (startDate: Date): Array<Months> => {

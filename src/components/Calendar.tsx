@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Fragment } from "react";
 import {
   ChevronDownIcon,
@@ -9,6 +11,7 @@ import {
 
 import { Menu, Transition } from "@headlessui/react";
 import { api } from "../utils/api";
+import { toast } from "react-hot-toast";
 
 export default function Calendar() {
   type Event = {
@@ -28,16 +31,51 @@ export default function Calendar() {
   };
 
   type Months = {
+    id: number;
     year: string;
     month: string;
+    nameOfMonth: string;
+    isCurrentMonth?: boolean;
   };
 
+  const months: Array<Months> = [
+    { id: 0, year: "2023", month: "01", nameOfMonth: "Januar" },
+    {
+      id: 1,
+      year: "2023",
+      month: "02",
+      nameOfMonth: "Februar",
+      isCurrentMonth: true,
+    },
+    {
+      id: 2,
+      year: "2023",
+      month: "03",
+      nameOfMonth: "März",
+    },
+  ];
+
+  const [selectedMonth, setSelectedMonth] = useState<Months>(
+    months.find((m) => m.isCurrentMonth)!
+  );
+
   const { data: days } = api.calendar.getCalendar.useQuery(void {}, {
-    select: (days) => days.filter((day) => day.isCurrentMonth),
+    select: (days) =>
+      days.filter(
+        (day) =>
+          day.date.slice(0, 4) === selectedMonth.year &&
+          day.date.slice(5, 7) === selectedMonth.month
+      ),
+    onError: () => {
+      toast.error("Fehler beim Erzeugen des Kalenders");
+      return [];
+    },
+    onSuccess: (days) => {
+      setSelectedDay(days[0]);
+    },
   });
 
-  // TODO optimize behaviour if selected is undefined
-  const selectedDay = days?.find((day) => day.isSelected);
+  const [selectedDay, setSelectedDay] = useState<Days>();
 
   const classNames = (...classes: any[]) => {
     return classes.filter(Boolean).join(" ");
@@ -45,35 +83,58 @@ export default function Calendar() {
 
   return (
     <>
+      {JSON.stringify(days)}
       {days && (
         <>
           {/* offsetMonths: {JSON.stringify(offsetMonths)} */}
           <div className="mt-10 lg:flex lg:h-full lg:flex-col">
             <header className="flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none">
               <h1 className="text-base font-semibold leading-6 text-gray-900">
-                <time dateTime="2022-01">January 2022</time>
+                <time dateTime={`${selectedMonth.year}-${selectedMonth.month}`}>
+                  {selectedMonth.nameOfMonth} {selectedMonth.year}
+                </time>
               </h1>
               <div className="flex items-center">
                 <div className="flex items-center rounded-md shadow-sm md:items-stretch">
                   <button
                     type="button"
                     className="flex items-center justify-center rounded-l-md border border-r-0 border-gray-300 bg-white py-2 pl-3 pr-4 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
+                    onClick={() => {
+                      if (selectedMonth?.id != 0) {
+                        setSelectedMonth(
+                          months.find(
+                            (month) =>
+                              month.id === (selectedMonth.id as number) - 1
+                          )!
+                        );
+                      }
+                    }}
                   >
-                    <span className="sr-only">Previous month</span>
+                    <span className="sr-only">Vorheriger Monat</span>
                     <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
                   </button>
                   <button
                     type="button"
                     className="hidden border-t border-b border-gray-300 bg-white px-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:relative md:block"
                   >
-                    Today
+                    {selectedMonth?.nameOfMonth}
                   </button>
                   <span className="relative -mx-px h-5 w-px bg-gray-300 md:hidden" />
                   <button
                     type="button"
                     className="flex items-center justify-center rounded-r-md border border-l-0 border-gray-300 bg-white py-2 pl-4 pr-3 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
+                    onClick={() => {
+                      if (months.length - 1 > selectedMonth.id) {
+                        setSelectedMonth(
+                          months.find(
+                            (month) =>
+                              month.id === (selectedMonth.id as number) + 1
+                          )!
+                        );
+                      }
+                    }}
                   >
-                    <span className="sr-only">Next month</span>
+                    <span className="sr-only">Nächster Monat</span>
                     <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
                   </button>
                 </div>
@@ -83,7 +144,7 @@ export default function Calendar() {
                       type="button"
                       className="flex items-center rounded-md border border-gray-300 bg-white py-2 pl-3 pr-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                     >
-                      Month view
+                      Monatsansicht
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"
                         aria-hidden="true"
@@ -112,7 +173,7 @@ export default function Calendar() {
                                   "block px-4 py-2 text-sm"
                                 )}
                               >
-                                Day view
+                                Tagesansicht
                               </a>
                             )}
                           </Menu.Item>
@@ -127,7 +188,7 @@ export default function Calendar() {
                                   "block px-4 py-2 text-sm"
                                 )}
                               >
-                                Week view
+                                Wochenansicht
                               </a>
                             )}
                           </Menu.Item>
@@ -142,22 +203,7 @@ export default function Calendar() {
                                   "block px-4 py-2 text-sm"
                                 )}
                               >
-                                Month view
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Year view
+                                Monatsansicht
                               </a>
                             )}
                           </Menu.Item>
@@ -170,7 +216,7 @@ export default function Calendar() {
                     type="button"
                     className="ml-6 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
-                    Add event
+                    Auto buchen
                   </button>
                 </div>
                 <Menu as="div" className="relative ml-6 md:hidden">
@@ -204,7 +250,7 @@ export default function Calendar() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              Create event
+                              Auto buchen
                             </a>
                           )}
                         </Menu.Item>
@@ -221,7 +267,7 @@ export default function Calendar() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              Go to today
+                              Heute
                             </a>
                           )}
                         </Menu.Item>
@@ -238,7 +284,7 @@ export default function Calendar() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              Day view
+                              Tagesansicht
                             </a>
                           )}
                         </Menu.Item>
@@ -253,7 +299,7 @@ export default function Calendar() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              Week view
+                              Wochenansicht
                             </a>
                           )}
                         </Menu.Item>
@@ -268,22 +314,7 @@ export default function Calendar() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              Month view
-                            </a>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(
-                                active
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-700",
-                                "block px-4 py-2 text-sm"
-                              )}
-                            >
-                              Year view
+                              Monatsansicht
                             </a>
                           )}
                         </Menu.Item>
@@ -299,22 +330,22 @@ export default function Calendar() {
                   M<span className="sr-only sm:not-sr-only">on</span>
                 </div>
                 <div className="bg-white py-2">
-                  T<span className="sr-only sm:not-sr-only">ue</span>
+                  D<span className="sr-only sm:not-sr-only">ie</span>
                 </div>
                 <div className="bg-white py-2">
-                  W<span className="sr-only sm:not-sr-only">ed</span>
+                  M<span className="sr-only sm:not-sr-only">it</span>
                 </div>
                 <div className="bg-white py-2">
-                  T<span className="sr-only sm:not-sr-only">hu</span>
+                  D<span className="sr-only sm:not-sr-only">on</span>
                 </div>
                 <div className="bg-white py-2">
-                  F<span className="sr-only sm:not-sr-only">ri</span>
+                  F<span className="sr-only sm:not-sr-only">re</span>
                 </div>
                 <div className="bg-white py-2">
-                  S<span className="sr-only sm:not-sr-only">at</span>
+                  S<span className="sr-only sm:not-sr-only">am</span>
                 </div>
                 <div className="bg-white py-2">
-                  S<span className="sr-only sm:not-sr-only">un</span>
+                  S<span className="sr-only sm:not-sr-only">on</span>
                 </div>
               </div>
               <div className="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
@@ -417,7 +448,7 @@ export default function Calendar() {
                 </div>
               </div>
             </div>
-            {selectedDay?.events.length > 0 && (
+            {selectedDay && selectedDay.events.length > 0 && (
               <div className="py-10 px-4 sm:px-6 lg:hidden">
                 <ol className="divide-y divide-gray-100 overflow-hidden rounded-lg bg-white text-sm shadow ring-1 ring-black ring-opacity-5">
                   {selectedDay.events.map((event) => (
