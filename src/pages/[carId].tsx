@@ -13,6 +13,7 @@ import updateLocal from "dayjs/plugin/updateLocale";
 import { api } from "../utils/api";
 
 import IconGenerator from "../components/common/IconGenerator";
+import Calendar from "../components/Calendar";
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocal);
@@ -301,7 +302,7 @@ export default function CarDetails() {
         </>
       )}
       {!sessionData && <p>Bitte Einloggen</p>}
-      {/* {JSON.stringify(carMessages)} */}
+      <Calendar />
     </>
   );
 }
