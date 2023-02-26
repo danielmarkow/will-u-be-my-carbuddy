@@ -116,7 +116,7 @@ const generateCalendarMonths = (startDate: Date): Array<Months> => {
 };
 
 export const calendarRouter = createTRPCRouter({
-  getCalendar: protectedProcedure.query(() => {
+  getCalendar: protectedProcedure.query(async () => {
     // doing this here because react behaves weird
     return generateCalendarDates(firstDayOfMonth(2));
   }),

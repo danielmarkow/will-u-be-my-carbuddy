@@ -348,25 +348,25 @@ export default function Calendar() {
             <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
               <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
                 <div className="bg-white py-2">
-                  M<span className="sr-only sm:not-sr-only">on</span>
+                  M<span className="sr-only sm:not-sr-only">o</span>
                 </div>
                 <div className="bg-white py-2">
                   D<span className="sr-only sm:not-sr-only">ie</span>
                 </div>
                 <div className="bg-white py-2">
-                  M<span className="sr-only sm:not-sr-only">it</span>
+                  M<span className="sr-only sm:not-sr-only">i</span>
                 </div>
                 <div className="bg-white py-2">
-                  D<span className="sr-only sm:not-sr-only">on</span>
+                  D<span className="sr-only sm:not-sr-only">o</span>
                 </div>
                 <div className="bg-white py-2">
-                  F<span className="sr-only sm:not-sr-only">re</span>
+                  F<span className="sr-only sm:not-sr-only">r</span>
                 </div>
                 <div className="bg-white py-2">
-                  S<span className="sr-only sm:not-sr-only">am</span>
+                  S<span className="sr-only sm:not-sr-only">a</span>
                 </div>
                 <div className="bg-white py-2">
-                  S<span className="sr-only sm:not-sr-only">on</span>
+                  S<span className="sr-only sm:not-sr-only">o</span>
                 </div>
               </div>
               <div className="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
