@@ -1,6 +1,8 @@
 import { useState } from "react";
-
 import { Fragment } from "react";
+
+import { useRouter } from "next/router";
+
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -56,23 +58,28 @@ export default function Calendar() {
   ];
 
   const utils = api.useContext();
-
+  const router = useRouter();
+  const { carId } = router.query;
   const [selectedMonth, setSelectedMonth] = useState<Months>(
     months.find((m) => m.isCurrentMonth)!
   );
 
-  const { data: days } = api.calendar.getCalendar.useQuery(void {}, {
-    select: (days) =>
-      days.filter(
-        (day) =>
-          day.date.slice(0, 4) === selectedMonth.year &&
-          day.date.slice(5, 7) === selectedMonth.month
-      ),
-    onError: () => {
-      toast.error("Fehler beim Erzeugen des Kalenders");
-      return [];
-    },
-  });
+  const { data: days } = api.calendar.getCalendar.useQuery(
+    { carId: carId as string },
+    {
+      select: (days) =>
+        days.filter(
+          (day) =>
+            day.date.slice(0, 4) === selectedMonth.year &&
+            day.date.slice(5, 7) === selectedMonth.month
+        ),
+      onError: () => {
+        toast.error("Fehler beim Erzeugen des Kalenders");
+        return [];
+      },
+      enabled: carId !== undefined,
+    }
+  );
 
   const [selectedDay, setSelectedDay] = useState<Days>({
     date: new Date().toISOString().slice(0, 10),
@@ -82,20 +89,23 @@ export default function Calendar() {
   });
 
   const updateCachedQuery = (selectedDate: Array<Days>) => {
-    utils.calendar.getCalendar.setData(void {}, (oldData) => {
-      const newData = oldData?.map((obj) => {
-        if (obj.isSelected === true) {
-          const { isSelected, ...rest } = obj;
-          return rest;
-        } else {
-          return obj;
-        }
-      });
+    utils.calendar.getCalendar.setData(
+      { carId: carId as string },
+      (oldData) => {
+        const newData = oldData?.map((obj) => {
+          if (obj.isSelected === true) {
+            const { isSelected, ...rest } = obj;
+            return rest;
+          } else {
+            return obj;
+          }
+        });
 
-      return newData?.map(
-        (obj) => selectedDate.find((d) => d.date === obj.date) || obj
-      );
-    });
+        return newData?.map(
+          (obj) => selectedDate.find((d) => d.date === obj.date) || obj
+        );
+      }
+    );
   };
 
   const classNames = (...classes: any[]) => {

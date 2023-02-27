@@ -27,17 +27,7 @@ model Car {
     UserCar      UserCar[]
     CarMessages  CarMessages[]
     Invite       Invite[]
-    Days         Days[]
-}
-
-model Days {
-    id     String   @id @default(cuid())
-    date   String
-    car    Car      @relation(fields: [carId], references: [id], onDelete: NoAction)
-    carId  String
-    user   User     @relation(fields: [userId], references: [id], onDelete: NoAction)
-    userId String
-    events Events[]
+    events       Events[]
 }
 
 model Events {
@@ -47,8 +37,8 @@ model Events {
     eventEndDate   DateTime
     user           User     @relation(fields: [userId], references: [id])
     userId         String
-    days           Days     @relation(fields: [daysId], references: [id])
-    daysId         String
+    car            Car      @relation(fields: [carId], references: [id], onDelete: NoAction)
+    carId          String
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
 }
@@ -125,8 +115,7 @@ model User {
     UserCar       UserCar[]
     CarMessages   CarMessages[]
     Invite        Invite[]
-    Days          Days[]
-    Events        Events[]
+    events        Events[]
 }
 
 model VerificationToken {

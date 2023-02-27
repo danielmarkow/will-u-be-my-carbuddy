@@ -6,7 +6,7 @@ type Event = {
   eventStartDate: Date;
   eventEndDate: Date;
   userId: string;
-  daysId: string;
+  carId: string;
 };
 
 const exampleEvents: Array<Event> = [
@@ -15,7 +15,7 @@ const exampleEvents: Array<Event> = [
     eventStartDate: new Date("2023-02-01T14:00"),
     eventEndDate: new Date("2023-02-01T15:30"),
     userId: "cleg4vmi30000e9zjgsfrspo2",
-    daysId: "clekjyjqb0000e9e7p6vrwwwx",
+    carId: "cleffoiu50005e912gjwktye1",
   },
 ];
 
@@ -29,8 +29,8 @@ async function run() {
         user: {
           connect: { id: e.userId },
         },
-        days: {
-          connect: { id: e.daysId },
+        car: {
+          connect: { id: e.carId },
         },
       },
     });

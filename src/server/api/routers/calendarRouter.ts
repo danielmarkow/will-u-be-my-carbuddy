@@ -2,12 +2,15 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 // date utilities and types
-type Event = {
-  id: number;
-  name: string;
-  time: string;
-  datetime: string;
-  href: string;
+type Events = {
+  id: string;
+  name: string | null;
+  eventStartDate: Date;
+  eventEndDate: Date;
+  userId: string;
+  carId: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 type Days = {
@@ -15,7 +18,7 @@ type Days = {
   isCurrentMonth?: boolean;
   isSelected?: boolean;
   isToday?: boolean;
-  events: Array<Event>;
+  events: Array<Events>;
 };
 
 type Months = {
@@ -116,8 +119,25 @@ const generateCalendarMonths = (startDate: Date): Array<Months> => {
 };
 
 export const calendarRouter = createTRPCRouter({
-  getCalendar: protectedProcedure.query(async () => {
-    // doing this here because react behaves weird
-    return generateCalendarDates(firstDayOfMonth(2));
-  }),
+  getCalendar: protectedProcedure
+    .input(z.object({ carId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const events = await ctx.prisma.events.findMany({
+        where: { carId: input.carId },
+      });
+
+      let rawDates = generateCalendarDates(firstDayOfMonth(2));
+
+      let datesEvents = rawDates.map((obj) => {
+        const eventData = events.filter(
+          (e) => e.eventStartDate.toISOString().slice(0, 10) === obj.date
+        );
+
+        obj.events = eventData;
+
+        return obj;
+      });
+
+      return datesEvents;
+    }),
 });
