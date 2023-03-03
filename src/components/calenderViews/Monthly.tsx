@@ -68,7 +68,7 @@ export default function MonthlyView({
                   <ol className="mt-2">
                     {day.events.slice(0, 2).map((event) => (
                       <li key={event.id}>
-                        <a href={event.href} className="group flex">
+                        <a /*</li>href={event.href}*/ className="group flex">
                           <p className="flex-auto truncate font-medium text-gray-900 group-hover:text-indigo-600">
                             {event.name}
                           </p>
@@ -78,7 +78,9 @@ export default function MonthlyView({
                               .slice(0, 10)}
                             className="ml-3 hidden flex-none text-gray-500 group-hover:text-indigo-600 xl:block"
                           >
-                            {event.time}
+                            {/* TODO when is this displayed */}
+                            {event.eventStartDate.toISOString().slice(11, 16)} -
+                            {event.eventEndDate.toISOString().slice(11, 16)}
                           </time>
                         </a>
                       </li>
@@ -163,18 +165,19 @@ export default function MonthlyView({
                 <div className="flex-auto">
                   <p className="font-semibold text-gray-900">{event.name}</p>
                   <time
-                    dateTime={event.datetime}
+                    dateTime={event.eventStartDate.toISOString().slice(0, 10)}
                     className="mt-2 flex items-center text-gray-700"
                   >
                     <ClockIcon
                       className="mr-2 h-5 w-5 text-gray-400"
                       aria-hidden="true"
                     />
-                    {event.time}
+                    {event.eventStartDate.toISOString().slice(11, 16)} -
+                    {event.eventEndDate.toISOString().slice(11, 16)}
                   </time>
                 </div>
                 <a
-                  href={event.href}
+                  /*href={event.href}*/
                   className="ml-6 flex-none self-center rounded-md border border-gray-300 bg-white py-2 px-3 font-semibold text-gray-700 opacity-0 shadow-sm hover:bg-gray-50 focus:opacity-100 group-hover:opacity-100"
                 >
                   Bearbeiten<span className="sr-only">, {event.name}</span>

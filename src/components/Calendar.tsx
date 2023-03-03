@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Fragment } from "react";
+import { useState, Fragment } from "react";
 
 import { useRouter } from "next/router";
 
@@ -10,50 +9,36 @@ import {
   EllipsisHorizontalIcon,
 } from "@heroicons/react/20/solid";
 
+import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+
+dayjs.extend(weekOfYear);
+
 import { Menu, Transition } from "@headlessui/react";
-import { api } from "../utils/api";
 import { toast } from "react-hot-toast";
+
+import { api } from "../utils/api";
+
+import type Months from "../types/monthsType";
+import type Days from "../types/daysEventsType";
+
 import MonthlyView from "./calenderViews/Monthly";
+import Weekly from "./calenderViews/Weekly";
 
 export default function Calendar() {
-  type Events = {
-    id: string;
-    name: string | null;
-    eventStartDate: Date;
-    eventEndDate: Date;
-    userId: string;
-    carId: string;
-    createdAt: Date;
-    updatedAt: Date;
-  };
-
-  type Days = {
-    date: string;
-    isCurrentMonth?: boolean;
-    isSelected?: boolean;
-    isToday?: boolean;
-    events: Array<Events>;
-  };
-
-  type Months = {
-    id: number;
-    year: string;
-    month: string;
-    nameOfMonth: string;
-    isCurrentMonth?: boolean;
-  };
-
   const months: Array<Months> = [
-    { id: 0, year: "2023", month: "01", nameOfMonth: "Januar" },
+    { id: 0, year: "2022", month: "11", nameOfMonth: "November" },
+    { id: 1, year: "2022", month: "12", nameOfMonth: "Dezember" },
+    { id: 2, year: "2023", month: "01", nameOfMonth: "Januar" },
     {
-      id: 1,
+      id: 3,
       year: "2023",
       month: "02",
       nameOfMonth: "Februar",
       isCurrentMonth: true,
     },
     {
-      id: 2,
+      id: 4,
       year: "2023",
       month: "03",
       nameOfMonth: "März",
@@ -63,6 +48,11 @@ export default function Calendar() {
   const utils = api.useContext();
   const router = useRouter();
   const { carId } = router.query;
+
+  type CalView = "monthly" | "weekly" | "day";
+
+  const [calendarView, setCalendarView] = useState<CalView>("monthly");
+
   const [selectedMonth, setSelectedMonth] = useState<Months>(
     months.find((m) => m.isCurrentMonth)!
   );
@@ -87,6 +77,7 @@ export default function Calendar() {
   const [selectedDay, setSelectedDay] = useState<Days>({
     date: new Date().toISOString().slice(0, 10),
     isCurrentMonth: true,
+    calendarWeek: dayjs(new Date()).week(),
     isSelected: true,
     events: [],
   });
@@ -120,9 +111,25 @@ export default function Calendar() {
       {/* {JSON.stringify(selectedDay)} */}
       {days && (
         <>
-          {/* offsetMonths: {JSON.stringify(offsetMonths)} */}
-          <div className="mt-10 lg:flex lg:h-full lg:flex-col">
-            <header className="flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none">
+          {JSON.stringify(days)}
+          <div
+            className={
+              calendarView === "monthly"
+                ? `mt-10 lg:flex lg:h-full lg:flex-col`
+                : calendarView === "weekly"
+                ? `flex h-full flex-col`
+                : `mt-10 lg:flex lg:h-full lg:flex-col`
+            }
+          >
+            <header
+              className={
+                calendarView === "monthly"
+                  ? `flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none`
+                  : calendarView === "weekly"
+                  ? `flex flex-none items-center justify-between border-b border-gray-200 py-4 px-6`
+                  : `flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none`
+              }
+            >
               <h1 className="text-base font-semibold leading-6 text-gray-900">
                 <time dateTime={`${selectedMonth.year}-${selectedMonth.month}`}>
                   {selectedMonth.nameOfMonth} {selectedMonth.year}
@@ -178,7 +185,11 @@ export default function Calendar() {
                       type="button"
                       className="flex items-center rounded-md border border-gray-300 bg-white py-2 pl-3 pr-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                     >
-                      Monatsansicht
+                      {calendarView == "monthly"
+                        ? "Monatsansicht"
+                        : calendarView === "weekly"
+                        ? "Wochenansicht"
+                        : "Tagesansicht"}
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"
                         aria-hidden="true"
@@ -199,7 +210,7 @@ export default function Calendar() {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="#"
+                                onClick={() => void setCalendarView("day")}
                                 className={classNames(
                                   active
                                     ? "bg-gray-100 text-gray-900"
@@ -214,7 +225,7 @@ export default function Calendar() {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="#"
+                                onClick={() => void setCalendarView("weekly")}
                                 className={classNames(
                                   active
                                     ? "bg-gray-100 text-gray-900"
@@ -229,7 +240,7 @@ export default function Calendar() {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="#"
+                                onClick={() => void setCalendarView("monthly")}
                                 className={classNames(
                                   active
                                     ? "bg-gray-100 text-gray-900"
@@ -310,7 +321,7 @@ export default function Calendar() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              onClick={() => void setCalendarView("day")}
                               className={classNames(
                                 active
                                   ? "bg-gray-100 text-gray-900"
@@ -325,7 +336,7 @@ export default function Calendar() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              onClick={() => void setCalendarView("weekly")}
                               className={classNames(
                                 active
                                   ? "bg-gray-100 text-gray-900"
@@ -340,7 +351,7 @@ export default function Calendar() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              onClick={() => void setCalendarView("monthly")}
                               className={classNames(
                                 active
                                   ? "bg-gray-100 text-gray-900"
@@ -358,13 +369,18 @@ export default function Calendar() {
                 </Menu>
               </div>
             </header>
-            {/* monthly view */}
-            <MonthlyView
-              days={days}
-              selectedDay={selectedDay}
-              setSelectedDay={setSelectedDay}
-              updateCachedQuery={updateCachedQuery}
-            />
+            {calendarView === "monthly" ? (
+              <MonthlyView
+                days={days}
+                selectedDay={selectedDay}
+                setSelectedDay={setSelectedDay}
+                updateCachedQuery={updateCachedQuery}
+              />
+            ) : calendarView === "weekly" ? (
+              <Weekly />
+            ) : (
+              <p>day</p>
+            )}
           </div>
         </>
       )}

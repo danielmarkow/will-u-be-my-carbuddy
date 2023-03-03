@@ -1,25 +1,12 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-// date utilities and types
-type Events = {
-  id: string;
-  name: string | null;
-  eventStartDate: Date;
-  eventEndDate: Date;
-  userId: string;
-  carId: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
 
-type Days = {
-  date: string;
-  isCurrentMonth?: boolean;
-  isSelected?: boolean;
-  isToday?: boolean;
-  events: Array<Events>;
-};
+dayjs.extend(weekOfYear);
+
+import type Days from "../../../types/daysEventsType";
 
 type Months = {
   year: string;
@@ -64,6 +51,7 @@ const generateCalendarDates = (date: Date): Array<Days> => {
     let daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getDate();
     for (let j = 1; j <= daysInMonth; j++) {
       const newDate = new Date(Date.UTC(year, month, j));
+      const calWeek = dayjs(newDate).week();
       const dateInCurrentMonth = isDateInCurrentMonth(newDate);
       const isToday = isDateToday(newDate);
       if (dateInCurrentMonth) {
@@ -73,6 +61,7 @@ const generateCalendarDates = (date: Date): Array<Days> => {
             date: newDate.toISOString().slice(0, 10),
             isCurrentMonth: true,
             // isSelected: true,
+            calendarWeek: calWeek,
             isToday: true,
             events: [],
           });
@@ -80,12 +69,14 @@ const generateCalendarDates = (date: Date): Array<Days> => {
           days.push({
             date: newDate.toISOString().slice(0, 10),
             isCurrentMonth: true,
+            calendarWeek: calWeek,
             events: [],
           });
         }
       } else {
         days.push({
           date: newDate.toISOString().slice(0, 10),
+          calendarWeek: calWeek,
           events: [],
         });
       }
@@ -97,7 +88,7 @@ const generateCalendarDates = (date: Date): Array<Days> => {
 
 const generateCalendarMonths = (startDate: Date): Array<Months> => {
   const yearMonthArray = [];
-  console.log("generateCalendarMonths", startDate);
+  // console.log("generateCalendarMonths", startDate);
   // iterate over the next 3 months
   for (let i = 0; i < 4; i++) {
     // get the year and month of the current iteration
@@ -116,6 +107,29 @@ const generateCalendarMonths = (startDate: Date): Array<Months> => {
   }
 
   return yearMonthArray;
+};
+
+const generateCalendarWeeks = () => {
+  const weeks = [];
+  let date = dayjs().startOf("month"); // Get the start of the current month
+
+  for (let i = 0; i < 12; i++) {
+    // Loop through the next three months
+    for (let j = 0; j < 4; j++) {
+      // Loop through the four weeks in each month
+      const week = {
+        start: date.startOf("week").toDate(),
+        end: date.endOf("week").toDate(),
+        number: date.week(),
+      };
+
+      weeks.push(week); // Add the week object to the array
+      date = date.add(1, "week"); // Add one week to the current date to start the next week
+    }
+    date = date.add(1, "month").startOf("month"); // Move to the first day of the next month
+  }
+
+  return weeks;
 };
 
 export const calendarRouter = createTRPCRouter({
